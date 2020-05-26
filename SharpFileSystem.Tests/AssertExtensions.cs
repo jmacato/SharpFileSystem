@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace SharpFileSystem.Tests
 {
     public static class EAssert
     {
         public static void Throws<T>(Action a)
-            where T: Exception
+            where T : Exception
         {
             try
             {
@@ -19,7 +19,7 @@ namespace SharpFileSystem.Tests
             {
                 return;
             }
-            Assert.Fail(string.Format("The exception '{0}' was not thrown.", typeof(T).FullName));
+            Assert.True(false, string.Format("The exception '{0}' was not thrown.", typeof(T).FullName));
         }
     }
 }
