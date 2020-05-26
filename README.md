@@ -1,4 +1,5 @@
-# SharpFileSystem
+# SharpFileSystem 
+[![Build Status](https://travis-ci.org/jmacato/SharpFileSystem.svg?branch=master)](https://travis-ci.org/jmacato/SharpFileSystem)
 
 SharpFileSystem is a [Virtual File System (VFS)](http://en.wikipedia.org/wiki/Virtual_file_system) implementation for .NET to allow access to different filesystems in the same way for normal files and directories.
 
