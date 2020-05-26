@@ -1,27 +1,20 @@
 using System;
-using SharpFileSystem.FileSystems;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Xunit;
+using SharpFileSystem.FileSystems;
 using SharpFileSystem.IO;
+using Xunit;
 
 namespace SharpFileSystem.Tests.FileSystems
 {
     public class PhysicalFileSystemTest : IDisposable
     {
-        string Root { get; set; }
-        PhysicalFileSystem FileSystem { get; set; }
-        string AbsoluteFileName { get; set; }
-
-        string FileName { get; }
-        FileSystemPath FileNamePath { get; }
-
         public PhysicalFileSystemTest()
         {
             FileName = "x";
             FileNamePath = FileSystemPath.Root.AppendFile(FileName);
-    
+
             Root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
             System.IO.Directory.CreateDirectory(Root);
             AbsoluteFileName = Path.Combine(Root, FileName);
@@ -30,9 +23,19 @@ namespace SharpFileSystem.Tests.FileSystems
 
         public void Dispose()
         {
-            using (FileSystem) { }
+            using (FileSystem)
+            {
+            }
+
             System.IO.Directory.Delete(Root, true);
         }
+
+        private string Root { get; }
+        private PhysicalFileSystem FileSystem { get; }
+        private string AbsoluteFileName { get; }
+
+        private string FileName { get; }
+        private FileSystemPath FileNamePath { get; }
 
         [Fact]
         public void CreateFile()
@@ -70,6 +73,24 @@ namespace SharpFileSystem.Tests.FileSystems
         }
 
         [Fact]
+        public void CreateFile_Empty()
+        {
+            using (var stream = FileSystem.CreateFile(FileNamePath))
+            {
+            }
+
+            Assert.Equal(
+                new byte[] { },
+                System.IO.File.ReadAllBytes(AbsoluteFileName));
+            using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
+            {
+                Assert.Equal(
+                    new byte[] { },
+                    stream.ReadAllBytes());
+            }
+        }
+
+        [Fact]
         public void CreateFile_Exists()
         {
             Assert.False(System.IO.File.Exists(AbsoluteFileName));
@@ -87,28 +108,11 @@ namespace SharpFileSystem.Tests.FileSystems
             {
                 stream.Write(content2, 0, content2.Length);
             }
+
             Assert.Equal(content2, System.IO.File.ReadAllBytes(AbsoluteFileName));
             using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
             {
                 Assert.Equal(content2, stream.ReadAllBytes());
-            }
-        }
-
-        [Fact]
-        public void CreateFile_Empty()
-        {
-            using (var stream = FileSystem.CreateFile(FileNamePath))
-            {
-            }
-
-            Assert.Equal(
-                new byte[] { },
-                System.IO.File.ReadAllBytes(AbsoluteFileName));
-            using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
-            {
-                Assert.Equal(
-                    new byte[] { },
-                    stream.ReadAllBytes());
             }
         }
     }

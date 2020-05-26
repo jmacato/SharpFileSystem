@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpFileSystem.Collections;
 using SharpFileSystem.FileSystems;
 using Xunit;
@@ -11,10 +6,6 @@ namespace SharpFileSystem.Tests.FileSystems
 {
     public class EntityMoverRegistrationTest
     {
-        private TypeCombinationDictionary<IEntityMover> Registration;
-        private IEntityMover physicalEntityMover = new PhysicalEntityMover();
-        private IEntityMover standardEntityMover = new StandardEntityMover();
-
         public EntityMoverRegistrationTest()
         {
             Registration = new TypeCombinationDictionary<IEntityMover>();
@@ -22,13 +13,17 @@ namespace SharpFileSystem.Tests.FileSystems
             Registration.AddLast(typeof(IFileSystem), typeof(IFileSystem), standardEntityMover);
         }
 
+        private readonly TypeCombinationDictionary<IEntityMover> Registration;
+        private readonly IEntityMover physicalEntityMover = new PhysicalEntityMover();
+        private readonly IEntityMover standardEntityMover = new StandardEntityMover();
+
         [Fact]
-        public void When_MovingFromPhysicalToGenericFileSystem_Expect_StandardEntityMover()
+        public void When_MovingFromGenericToGenericFileSystem_Expect_StandardEntityMover()
         {
             Assert.Equal(
-                Registration.GetSupportedRegistration(typeof(PhysicalFileSystem), typeof(IFileSystem)).Value,
+                Registration.GetSupportedRegistration(typeof(IFileSystem), typeof(IFileSystem)).Value,
                 standardEntityMover
-                );
+            );
         }
 
         [Fact]
@@ -37,16 +32,16 @@ namespace SharpFileSystem.Tests.FileSystems
             Assert.Equal(
                 Registration.GetSupportedRegistration(typeof(IFileSystem), typeof(PhysicalFileSystem)).Value,
                 standardEntityMover
-                );
+            );
         }
 
         [Fact]
-        public void When_MovingFromGenericToGenericFileSystem_Expect_StandardEntityMover()
+        public void When_MovingFromPhysicalToGenericFileSystem_Expect_StandardEntityMover()
         {
             Assert.Equal(
-                Registration.GetSupportedRegistration(typeof(IFileSystem), typeof(IFileSystem)).Value,
+                Registration.GetSupportedRegistration(typeof(PhysicalFileSystem), typeof(IFileSystem)).Value,
                 standardEntityMover
-                );
+            );
         }
 
         [Fact]
@@ -55,7 +50,7 @@ namespace SharpFileSystem.Tests.FileSystems
             Assert.Equal(
                 Registration.GetSupportedRegistration(typeof(PhysicalFileSystem), typeof(PhysicalFileSystem)).Value,
                 physicalEntityMover
-                );
+            );
         }
     }
 }

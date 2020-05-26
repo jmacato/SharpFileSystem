@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace SharpFileSystem.Tests
@@ -19,6 +16,7 @@ namespace SharpFileSystem.Tests
             {
                 return;
             }
+
             Assert.True(false, string.Format("The exception '{0}' was not thrown.", typeof(T).FullName));
         }
     }

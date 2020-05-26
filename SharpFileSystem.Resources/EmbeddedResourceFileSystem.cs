@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace SharpFileSystem.Resources
 {
     public class EmbeddedResourceFileSystem : IFileSystem
     {
-        public Assembly Assembly { get; private set; }
         public EmbeddedResourceFileSystem(Assembly assembly)
         {
             Assembly = assembly;
         }
+
+        public Assembly Assembly { get; }
 
         public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
         {

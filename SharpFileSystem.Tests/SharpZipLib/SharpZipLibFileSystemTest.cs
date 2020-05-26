@@ -1,21 +1,15 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
-using Xunit;
-using SharpFileSystem.IO;
 using SharpFileSystem.SharpZipLib;
+using Xunit;
 
 namespace SharpFileSystem.Tests.SharpZipLib
 {
-    
     public class SharpZipLibFileSystemTest : IDisposable
     {
-        private Stream zipStream;
-        private SharpZipLibFileSystem fileSystem;
- 
         public SharpZipLibFileSystemTest()
         {
             var memoryStream = new MemoryStream();
@@ -35,25 +29,30 @@ namespace SharpFileSystem.Tests.SharpZipLib
             memoryStream.Position = 0;
             fileSystem = SharpZipLibFileSystem.Open(zipStream);
         }
- 
+
         public void Dispose()
         {
             fileSystem.Dispose();
             zipStream.Dispose();
         }
 
+        private readonly Stream zipStream;
+        private readonly SharpZipLibFileSystem fileSystem;
+
         private readonly FileSystemPath directoryPath = FileSystemPath.Parse("/directory/");
         private readonly FileSystemPath textfileAPath = FileSystemPath.Parse("/textfileA.txt");
         private readonly FileSystemPath fileInDirectoryPath = FileSystemPath.Parse("/directory/fileInDirectory.txt");
 
         [Fact]
-        public void GetEntitiesOfRootTest()
+        public void ExistsTest()
         {
-            Assert.Equal(new[]
-            {
-                textfileAPath,
-                directoryPath
-            }, fileSystem.GetEntities(FileSystemPath.Root).ToArray());
+            Assert.True(fileSystem.Exists(FileSystemPath.Root));
+            Assert.True(fileSystem.Exists(textfileAPath));
+            Assert.True(fileSystem.Exists(directoryPath));
+            Assert.True(fileSystem.Exists(fileInDirectoryPath));
+            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/nonExistingFile")));
+            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/nonExistingDirectory/")));
+            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/directory/nonExistingFileInDirectory")));
         }
 
         [Fact]
@@ -66,15 +65,13 @@ namespace SharpFileSystem.Tests.SharpZipLib
         }
 
         [Fact]
-        public void ExistsTest()
+        public void GetEntitiesOfRootTest()
         {
-            Assert.True(fileSystem.Exists(FileSystemPath.Root));
-            Assert.True(fileSystem.Exists(textfileAPath));
-            Assert.True(fileSystem.Exists(directoryPath));
-            Assert.True(fileSystem.Exists(fileInDirectoryPath));
-            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/nonExistingFile")));
-            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/nonExistingDirectory/")));
-            Assert.False(fileSystem.Exists(FileSystemPath.Parse("/directory/nonExistingFileInDirectory")));
+            Assert.Equal(new[]
+            {
+                textfileAPath,
+                directoryPath
+            }, fileSystem.GetEntities(FileSystemPath.Root).ToArray());
         }
     }
 }
