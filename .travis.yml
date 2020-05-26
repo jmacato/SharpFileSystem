@@ -1,13 +1,12 @@
 language: csharp
-mono:
-  - latest
 os:
   - linux
-  - osx
-solution: SharpFileSystem.sln
-install:
-  - nuget restore SharpFileSystem.sln
+dist: bionic
+env:
+  global:
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+    - DOTNET_CLI_TELEMETRY_OPTOUT=1
+mono: none
+dotnet: 3.1.102
 script:
-  - xbuild /p:Configuration=Debug SharpFileSystem.sln
-  - xbuild /p:Configuration=Release SharpFileSystem.sln
-  - mono packages/NUnit.ConsoleRunner.3.4.1/tools/nunit3-console.exe SharpFileSystem.Tests/bin/Debug/SharpFileSystem.Tests.dll
+  - dotnet test SharpFileSystem.Tests/SharpFileSystem.Tests.csproj
